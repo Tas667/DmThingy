@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes with Images, Zoom, Drag-and-Drop, and Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #1a1a1a; color: #e0e0e0; }
+        #header { background-color: #2a2a2a; color: #e0e0e0; padding: 10px; text-align: center; border-radius: 5px; }
+        #create-note { background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 5px; }
+        #notes-container { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; }
+        .note-card { flex: 0 0 calc(14.28% - 10px); background-color: #2a2a2a; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); padding: 10px; cursor: pointer; max-width: calc(14.28% - 10px); box-sizing: border-box; }
+        .note-card img { max-width: 100%; height: auto; border-radius: 5px; margin-bottom: 10px; }
+        #note-editor { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #2a2a2a; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 1000; max-width: 80%; max-height: 80%; overflow: auto; }
+        #note-content { width: 100%; background-color: #3a3a3a; color: #e0e0e0; border: 1px solid #4a4a4a; padding: 5px; margin-bottom: 10px; border-radius: 5px; height: 150px; white-space: pre-wrap; font-family: monospace; }
+        .editor-buttons { text-align: right; }
+        .editor-buttons button { margin-left: 10px; background-color: #4CAF50; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
+        button { background-color: #4CAF50; color: white; border: none; padding: 5px 10px; margin: 2px; cursor: pointer; border-radius: 5px; }
+        #image-upload { display: none; }
+        #image-upload-label { background-color: #4CAF50; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        #zoom-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; }
+        #zoomed-note { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #2a2a2a; padding: 20px; border-radius: 10px; max-width: 80%; max-height: 80%; overflow: auto; z-index: 1001; }
+        #zoomed-note img { max-width: 100%; height: auto; border-radius: 5px; margin-bottom: 10px; }
+        #image-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        #image-preview img { max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 5px; }
+        #drag-drop-area { border: 2px dashed #4CAF50; border-radius: 5px; padding: 20px; text-align: center; color: #e0e0e0; margin-top: 10px; cursor: pointer; }
+        #drag-drop-area.dragover { background-color: rgba(76, 175, 80, 0.2); }
+        #search-input { width: 100%; padding: 10px; margin-top: 10px; background-color: #3a3a3a; color: #e0e0e0; border: 1px solid #4a4a4a; border-radius: 5px; }
+        .note-content { white-space: pre-wrap; font-family: monospace; }
+        .zoomed-image-container { margin-bottom: 10px; }
+        .zoomed-image-container img { max-width: 100%; height: auto; display: block; }
+        @media (max-width: 1600px) { .note-card { flex: 0 0 calc(16.66% - 10px); max-width: calc(16.66% - 10px); } }
+        @media (max-width: 1400px) { .note-card { flex: 0 0 calc(20% - 10px); max-width: calc(20% - 10px); } }
+        @media (max-width: 1200px) { .note-card { flex: 0 0 calc(25% - 10px); max-width: calc(25% - 10px); } }
+        @media (max-width: 1000px) { .note-card { flex: 0 0 calc(33.33% - 10px); max-width: calc(33.33% - 10px); } }
+        @media (max-width: 768px) { .note-card { flex: 0 0 calc(50% - 10px); max-width: calc(50% - 10px); } }
+        @media (max-width: 480px) { .note-card { flex: 0 0 100%; max-width: 100%; } }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <button id="create-note">Create New Note</button>
+        <div id="drag-drop-area">
+            Drag and drop images here to create a new note
+        </div>
+        <input type="text" id="search-input" placeholder="Search notes...">
+    </div>
+
+    <div id="notes-container"></div>
+
+    <div id="note-editor">
+        <textarea id="note-content" placeholder="Note Content"></textarea>
+        <input type="file" id="image-upload" accept="image/*" multiple>
+        <label for="image-upload" id="image-upload-label">Upload Images</label>
+        <div id="image-preview"></div>
+        <div class="editor-buttons">
+            <button id="save-note">Save Note</button>
+            <button id="cancel-edit">Cancel</button>
+        </div>
+    </div>
+
+    <div id="zoom-overlay">
+        <div id="zoomed-note"></div>
+    </div>
+
+    <script>
+        let notes = [];
+        let editingIndex = -1;
+        let currentImages = [];
+
+        const notesContainer = document.getElementById('notes-container');
+        const noteEditor = document.getElementById('note-editor');
+        const noteContent = document.getElementById('note-content');
+        const imageUpload = document.getElementById('image-upload');
+        const imagePreview = document.getElementById('image-preview');
+        const zoomOverlay = document.getElementById('zoom-overlay');
+        const zoomedNote = document.getElementById('zoomed-note');
+        const dragDropArea = document.getElementById('drag-drop-area');
+        const searchInput = document.getElementById('search-input');
+
+        function resetCurrentNote() {
+            editingIndex = -1;
+            noteContent.value = '';
+            currentImages = [];
+            updateImagePreview();
+        }
+
+        document.getElementById('create-note').addEventListener('click', () => {
+            resetCurrentNote();
+            noteEditor.style.display = 'block';
+        });
+
+        imageUpload.addEventListener('change', (event) => {
+            const files = event.target.files;
+            handleFiles(files);
+        });
+
+        noteContent.addEventListener('paste', (event) => {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    const blob = item.getAsFile();
+                    handleFiles([blob]);
+                }
+            }
+        });
+
+        dragDropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragDropArea.classList.add('dragover');
+        });
+
+        dragDropArea.addEventListener('dragleave', () => {
+            dragDropArea.classList.remove('dragover');
+        });
+
+        dragDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragDropArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+            openNoteEditorWithImages();
+        });
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            filterNotes(searchTerm);
+        });
+
+        function filterNotes(searchTerm) {
+            const filteredNotes = notes.filter(note => 
+                note.content.toLowerCase().includes(searchTerm)
+            );
+            renderNotes(filteredNotes);
+        }
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        currentImages.push(e.target.result);
+                        updateImagePreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        function updateImagePreview() {
+            imagePreview.innerHTML = '';
+            currentImages.forEach((image, index) => {
+                const img = document.createElement('img');
+                img.src = image;
+                img.alt = `Preview ${index + 1}`;
+                imagePreview.appendChild(img);
+            });
+        }
+
+        function openNoteEditorWithImages() {
+            resetCurrentNote();
+            noteEditor.style.display = 'block';
+        }
+
+        document.getElementById('save-note').addEventListener('click', () => {
+            const content = noteContent.value;
+            if (content || currentImages.length > 0) {
+                if (editingIndex === -1) {
+                    notes.push({ content, images: currentImages });
+                } else {
+                    notes[editingIndex].content = content;
+                    notes[editingIndex].images = currentImages;
+                }
+                saveNotes();
+                renderNotes();
+                noteEditor.style.display = 'none';
+                resetCurrentNote();
+            }
+        });
+
+        document.getElementById('cancel-edit').addEventListener('click', () => {
+            noteEditor.style.display = 'none';
+            resetCurrentNote();
+        });
+
+        function renderNotes(notesToRender = notes) {
+            notesContainer.innerHTML = '';
+            notesToRender.forEach((note, index) => {
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card';
+                let noteHtml = '';
+                if (note.images && note.images.length > 0) {
+                    noteHtml += `<img src="${note.images[0]}" alt="Note image">`;
+                }
+                noteHtml += `
+                    <pre class="note-content">${note.content}</pre>
+                    <button onclick="editNote(${notes.indexOf(note)}); event.stopPropagation();">Edit</button>
+                    <button onclick="deleteNote(${notes.indexOf(note)}); event.stopPropagation();">Delete</button>
+                `;
+                noteCard.innerHTML = noteHtml;
+                noteCard.addEventListener('click', () => zoomNote(notes.indexOf(note)));
+                notesContainer.appendChild(noteCard);
+            });
+        }
+
+        function editNote(index) {
+            editingIndex = index;
+            const note = notes[index];
+            noteContent.value = note.content;
+            currentImages = note.images || [];
+            updateImagePreview();
+            noteEditor.style.display = 'block';
+        }
+
+        function deleteNote(index) {
+            notes.splice(index, 1);
+            saveNotes();
+            renderNotes();
+        }
+
+        function zoomNote(index) {
+            const note = notes[index];
+            let zoomedContent = '';
+            if (note.images && note.images.length > 0) {
+                note.images.forEach((image, imgIndex) => {
+                    zoomedContent += `
+                        <div class="zoomed-image-container">
+                            <a href="${image}" target="_blank">
+                                <img src="${image}" alt="Note image ${imgIndex + 1}">
+                            </a>
+                        </div>`;
+                });
+            }
+            zoomedContent += `<pre class="note-content">${note.content}</pre>`;
+            zoomedNote.innerHTML = zoomedContent;
+            zoomOverlay.style.display = 'block';
+        }
+
+        zoomOverlay.addEventListener('click', (event) => {
+            if (event.target === zoomOverlay) {
+                zoomOverlay.style.display = 'none';
+            }
+        });
+
+        function saveNotes() {
+            fetch('/api/save-notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(notes),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Notes saved successfully:', data);
+            })
+            .catch((error) => {
+                console.error('Error saving notes:', error);
+            });
+        }
+
+        function loadNotes() {
+            fetch('/api/get-notes')
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    notes = data;
+                } else {
+                    notes = [];
+                    console.error('Received data is not an array:', data);
+                }
+                renderNotes();
+            })
+            .catch((error) => {
+                console.error('Error loading notes:', error);
+                notes = [];
+                renderNotes();
+            });
+        }
+
+        loadNotes();
+    </script>
+</body>
+</html>

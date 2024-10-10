@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D&D Tools</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        .tab-container {
+            display: flex;
+            background-color: #2d2d2d;
+            border-bottom: 1px solid #3d3d3d;
+            padding: 0 20px;
+        }
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            color: #e0e0e0;
+            border: none;
+            background-color: inherit;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom: 3px solid #4285f4;
+            color: #4285f4;
+        }
+        .content {
+            display: none;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .content.active {
+            display: flex;
+        }
+        iframe {
+            flex-grow: 1;
+            border: none;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-container">
+        <button class="tab active" onclick="openTab(event, 'description-generator')">Description Generator</button>
+        <button class="tab" onclick="openTab(event, 'npc-generator')">NPC Generator</button>
+        <button class="tab" onclick="openTab(event, 'miniature-creator')">Miniature Creator</button>
+        <button class="tab" onclick="openTab(event, 'random-generator')">Random Generator</button>
+        <button class="tab" onclick="openTab(event, 'saved-npcs')">Saved NPCs</button>
+        <button class="tab" onclick="openTab(event, 'notes')">Notes</button>
+    </div>
+    <div id="description-generator" class="content active">
+        <iframe src="tools/tool1.html"></iframe>
+    </div>
+    <div id="npc-generator" class="content">
+        <iframe src="tools/tool2.html"></iframe>
+    </div>
+    <div id="miniature-creator" class="content">
+        <iframe src="tools/tool3.html"></iframe>
+    </div>
+    <div id="random-generator" class="content">
+        <iframe src="tools/tool4.html"></iframe>
+    </div>
+    <div id="saved-npcs" class="content">
+        <iframe src="tools/tool5.html"></iframe>
+    </div>
+    <div id="notes" class="content">
+        <iframe src="tools/tool6.html"></iframe>
+    </div>
+    <script>
+        function openTab(evt, tabName) {
+            var i, content, tabs;
+            content = document.getElementsByClassName("content");
+            for (i = 0; i < content.length; i++) {
+                content[i].className = content[i].className.replace(" active", "");
+            }
+            tabs = document.getElementsByClassName("tab");
+            for (i = 0; i < tabs.length; i++) {
+                tabs[i].className = tabs[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).className += " active";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>

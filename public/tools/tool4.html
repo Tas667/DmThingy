@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamiczny Generator Losowych Elementów</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #e0e0e0;
+            background-color: #1e1e1e;
+            margin: 0;
+            padding: 20px;
+        }
+        #controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+            min-width: 200px;
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .column h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+        .card {
+            background-color: #3d3d3d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            position: relative;
+        }
+        .card .delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            display: none;
+            color: #e0e0e0;
+            background-color: #ff4444;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+        }
+        .card:hover .delete {
+            display: block;
+        }
+        button {
+            padding: 10px;
+            background-color: #4d4d4d;
+            color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #5d5d5d;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button onclick="generateAll()">Generate All</button>
+        <button onclick="cleanAll()">Clean All</button>
+    </div>
+    <div id="content">
+        <!-- Columns will be dynamically added here -->
+    </div>
+    <script>
+        async function loadFileList() {
+            try {
+                const response = await fetch('/get-files');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const files = await response.json();
+                const content = document.getElementById('content');
+                content.innerHTML = ''; // Clear previous content
+                files.forEach(file => {
+                    const column = document.createElement('div');
+                    column.className = 'column';
+                    column.innerHTML = `
+                        <h2>${file}</h2>
+                        <button onclick="loadAndSelectRandom('${file}')">Generate Random Item</button>
+                        <div id="${file}-items"></div>
+                    `;
+                    content.appendChild(column);
+                });
+            } catch (error) {
+                console.error('Error loading file list:', error);
+                document.getElementById('content').textContent = 'Failed to load file list.';
+            }
+        }
+
+        async function loadAndSelectRandom(fileName) {
+            try {
+                console.log(`Attempting to fetch random item for file: ${fileName}`);
+                const response = await fetch(`/get-random-item?file=${fileName}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const randomItem = data.item;
+                console.log(`Received random item: ${randomItem}`);
+                
+                // Format the item to replace newlines with <br>
+                const formattedItem = randomItem.replace(/\n/g, '<br>');
+                
+                // Create a new card for the result
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <span class="delete" onclick="this.parentElement.remove()">×</span>
+                    ${formattedItem}
+                `;
+                
+                // Add the card to the correct column
+                const itemsContainer = document.getElementById(`${fileName}-items`);
+                itemsContainer.appendChild(card);
+            } catch (error) {
+                console.error('Error loading element:', error);
+                alert('Failed to load the element.');
+            }
+        }
+
+        function generateAll() {
+            const generateButtons = document.querySelectorAll('.column button');
+            generateButtons.forEach(button => button.click());
+        }
+
+        function cleanAll() {
+            const itemContainers = document.querySelectorAll('[id$="-items"]');
+            itemContainers.forEach(container => container.innerHTML = '');
+        }
+
+        // Load file list when the page starts
+        loadFileList();
+    </script>
+</body>
+</html>

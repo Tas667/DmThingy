@@ -1,0 +1,55 @@
+{
+  "description": {
+    "summary": "A Halfling Potter who brings joy to her small village with her handcrafted pottery.",
+    "details": [
+      "With curly auburn hair tied in a messy bun, she wears a clay-stained apron that smells faintly of wet earth.",
+      "The rhythmic sound of clay being spun on her potter's wheel resonates through her cozy workshop, mingling with the scent of baked bread from her oven.",
+      "Bright green eyes sparkle with warmth as she hums a cheerful tune while shaping a piece of clay.",
+      "The gentle glow from the fireplace casts flickering shadows, creating a welcoming atmosphere filled with the earthy aroma of her craft.",
+      "Her laughter rings out like a melody when she shares stories with village children visiting her shop."
+    ]
+  },
+  "aspects": {
+    "current_activity": "She is crafting a new batch of decorative pots for the upcoming village festival.",
+    "short_term_goal": "To finish at least three unique pieces before the festival starts in a week.",
+    "long_term_goal": "To become known as the finest potter in the region and perhaps teach her craft to others.",
+    "personality": "Joyfully optimistic and kind-hearted, always ready to lend an ear or a helping hand.",
+    "fear_weakness": "Fear of losing her creative touch or failing to make something beautiful.",
+    "belief_value": "Values community and believes in spreading happiness through her art.",
+    "relationship": "Has a close bond with the local children, often teaching them small crafts and sharing her stories.",
+    "potential_quest": "Might ask the player to help her gather rare clay from a nearby riverbank for a special project."
+  },
+  "dialogue": [
+    "Ah, greetings, traveler! Care to see the latest wares from my humble workshop?",
+    "You know, clay has a way of revealing the artist within. Don't you think?",
+    "Have you ever tried your hand at pottery? It’s quite relaxing, I assure you.",
+    "You see, each piece I make carries a bit of love and a sprinkle of magic!",
+    "Oh, are you in need of a gift? I have just the thing for any occasion!",
+    "It was delightful speaking with you! Come back anytime, and may your path be filled with joy!"
+  ],
+  "stats": {
+    "name": "Liesl Bramblefoot",
+    "title": "Potter",
+    "armorClass": "12",
+    "hitPoints": "27 (5d8 + 5)",
+    "speed": "25 ft.",
+    "str": "10",
+    "dex": "12",
+    "con": "13",
+    "int": "14",
+    "wis": "15",
+    "cha": "16",
+    "skills": "Insight +3, Persuasion +5, Crafting +4",
+    "senses": "passive Perception 12",
+    "languages": "Common, Halfling",
+    "challenge": "1/4 (50 XP)"
+  },
+  "actions": [
+    {
+      "name": "Pottery Creation",
+      "description": "Liesl spends her time shaping clay on the potter's wheel, creating beautiful pots and other pottery items. She can create 1 item per turn, taking special care to ensure each piece is well-crafted."
+    }
+  ],
+  "loot": "A selection of beautifully crafted pottery items (approx. 5 silver coins worth each), assorted colorful glazes, and a small charm that brings good luck in crafting.",
+  "imageUrl": "saved/npc_liesl_bramblefoot_2024-09-28/image.png"
+}

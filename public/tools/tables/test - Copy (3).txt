@@ -1,0 +1,7 @@
+{
+    "items": [
+        "Sword of Destiny\n+2 to attack rolls\nA legendary sword forged by the ancients.",
+        "Shield of Ages\nAbsorbs one magical attack per day.\nOnce used, it takes a full 24 hours to recharge.",
+        "Potion of Healing\nRestores 2d4+2 hit points\nA staple for adventurers everywhere."
+    ]
+}

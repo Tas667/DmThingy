@@ -1,0 +1,62 @@
+{
+  "aspects": {
+    "current_activity": "Practicing his stone-throwing skills with his son, demonstrating different techniques and seeing who can throw the farthest.",
+    "short_term_goal": "To perfect a new throwing technique that involves a unique spin to increase distance.",
+    "long_term_goal": "To raise his son to be the finest stone-thrower in the mountain range, capable of defending their territory from any human intruders.",
+    "personality": "Has a rough sense of humor, often finding amusement in the folly of humans who wander too close to his training grounds.",
+    "fear_weakness": "Terrified of losing his son, which causes him to hesitate in dangerous situations.",
+    "belief_value": "Believes that strength and skill are paramount, and that humans are intruders to be dealt with swiftly.",
+    "relationship": "He has a strong bond with his son, who is the only one he shows genuine affection towards.",
+    "potential_quest": "Could ask the player to retrieve a forgotten toy for his son, which is lost near the edge of human settlements, warning them about the dangers of being spotted."
+  },
+  "dialogue": [
+    "Well, well! Another tiny one wandering into my training grounds?",
+    "You adventurers are like rocks in the river—easy to toss aside.",
+    "I hope you’re here for something important, or you might just become my next practice target.",
+    "My son can throw a stone further than you can run! Care for a wager?",
+    "Why do humans always come to the mountains? Can't you find a cozy inn somewhere?",
+    "Be gone before I mistake you for a training dummy!"
+  ],
+  "stats": {
+    "name": "Bergor Ironhand",
+    "title": "Stone-Thrower of the Mountain",
+    "armorClass": "15",
+    "hitPoints": "72 (9d12 + 18)",
+    "speed": "40 ft.",
+    "str": "20",
+    "dex": "14",
+    "con": "16",
+    "int": "8",
+    "wis": "12",
+    "cha": "10",
+    "skills": {
+      "Athletics": "+8",
+      "Intimidation": "+4",
+      "Perception": "+3"
+    },
+    "senses": "darkvision 60 ft., passive Perception 13",
+    "languages": [
+      "Giant",
+      "Common"
+    ],
+    "challenge": "4 (1,100 XP)"
+  },
+  "actions": [
+    {
+      "name": "Rock Hurl",
+      "description": "Bergor hurls a large boulder at a target up to 60 feet away. The target must make a DC 15 Dexterity saving throw, taking 3d10 bludgeoning damage on a failed save, or half as much damage on a successful one. Bergor can only use this action if he has a boulder within reach."
+    }
+  ],
+  "loot": "A selection of worn but sturdy giant-sized leather armor, a handmade stone carving of a mountain (worth a small sum), and a pouch containing a few gemstones (totaling 50 gold pieces) found within the training area.",
+  "description": {
+    "summary": "A hulking Giant Rogue who spends his days honing the art of stone-throwing in the mountains.",
+    "details": [
+      "Towering above the treetops, his gnarled hands deftly grip boulders as if they were mere pebbles, showcasing his immense strength.",
+      "His skin is a patchwork of earthy tones, resembling the rugged cliffs around him, while a tangle of dark hair flows down his back, peppered with twigs and leaves.",
+      "The air around him crackles with tension each time he prepares to hurl a rock, accompanied by the ominous sound of shifting earth beneath his feet.",
+      "With a perpetual scowl etched into his rugged features, his deep voice rumbles like distant thunder whenever he chuckles at the sight of pitiful human adventurers.",
+      "He has a soft spot for his small son, whose laughter echoes among the mountains, providing a stark contrast to the menace he poses to any intruding humans."
+    ]
+  },
+  "imageUrl": "saved/npc_bergor_ironhand_2024-09-30/image.png"
+}

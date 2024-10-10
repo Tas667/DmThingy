@@ -1,0 +1,7 @@
+{
+    "items": [
+        "- A potem przyszły wilki...\n- Co? Jakie wilki? Gdzie?\n- No, do karczmy! Trzy wielkie, szare bestie. Myślałem, że to koniec, ale okazało się, że to byli przebrani druidzi szukający piwa.",
+        "- I dlatego tak trudno mi kupić spodnie.\n- Ale co ma wspólnego incydent z minotaurem a twoje problemy z garderobą?\n- Widzisz te rogi? Próbuj znaleźć spodnie, które pasują na taki tyłek!",
+        "- Co masz na myśli mówiąc, że to zakażone?\n- No, wiesz... zielone, pulsujące, wydziela dziwny zapach...\n- Na brodę Moradin, człowieku! To miał być zwykły tatuaż, a nie portal do Otchłani!"
+    ]
+}

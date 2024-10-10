@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPC Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        .sidebar {
+            background-color: #2d3748;
+        }
+        input, select, textarea {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            border-color: #718096;
+        }
+        .card {
+            background-color: #2d3748;
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+    <div class="sidebar w-64 p-6 overflow-y-auto">
+        <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-4">NPC Generator</div>
+        <input id="race-input" class="w-full mb-2 p-2 rounded" placeholder="Race (optional)">
+        <input id="class-input" class="w-full mb-2 p-2 rounded" placeholder="Class (optional)">
+        <input id="style-input" class="w-full mb-2 p-2 rounded" placeholder="Style (optional)">
+        <input id="player-count" class="w-full mb-2 p-2 rounded" type="number" placeholder="Player Count">
+        <input id="average-level" class="w-full mb-2 p-2 rounded" type="number" placeholder="Average Level">
+        <select id="danger-level" class="w-full mb-2 p-2 rounded">
+            <option value="low">Low Danger</option>
+            <option value="medium">Medium Danger</option>
+            <option value="high">High Danger</option>
+        </select>
+        <textarea id="other-info" class="w-full mb-2 p-2 rounded h-24" placeholder="Other info or requirements"></textarea>
+        <select id="image-model" class="w-full mb-2 p-2 rounded">
+            <option value="dalle">DALL-E</option>
+            <option value="flux">Flux</option>
+        </select>
+        <div class="flex items-center mb-4">
+            <input type="checkbox" id="generate-image" class="mr-2">
+            <label for="generate-image" class="text-gray-300">Generate Image</label>
+        </div>
+        <button onclick="generateNPC()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full mb-2">
+            Generate NPC
+        </button>
+        <button onclick="saveNPC()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">
+            Save NPC
+        </button>
+    </div>
+    <div class="flex-1 p-6 overflow-y-auto">
+        <div class="flex mb-6">
+            <div class="w-1/2 pr-3">
+                <h2 class="text-2xl font-bold mb-2">NPC Image</h2>
+                <img id="npc-image" src="https://via.placeholder.com/400x400.png?text=NPC+Image" alt="NPC Image" class="w-full h-auto">
+            </div>
+            <div class="w-1/2 pl-3">
+                <div class="card p-4 rounded mb-4">
+                    <h2 class="text-2xl font-bold mb-2 flex justify-between items-center">
+                        Bio <button onclick="editField('bio-content')" class="bg-gray-600 text-sm px-2 py-1 rounded">Edit</button>
+                    </h2>
+                    <div id="bio-content" class="text-gray-300"></div>
+                </div>
+                <div class="card p-4 rounded">
+                    <h2 class="text-2xl font-bold mb-2 flex justify-between items-center">
+                        Stats <button onclick="editField('stats-block')" class="bg-gray-600 text-sm px-2 py-1 rounded">Edit</button>
+                    </h2>
+                    <div id="stats-block" class="text-gray-300"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card p-4 rounded mb-4">
+            <h2 class="text-2xl font-bold mb-2 flex justify-between items-center">
+                Character Aspects <button onclick="editField('character-aspects-content')" class="bg-gray-600 text-sm px-2 py-1 rounded">Edit</button>
+            </h2>
+            <div id="character-aspects-content" class="text-gray-300"></div>
+        </div>
+        <div class="card p-4 rounded mb-4">
+            <h2 class="text-2xl font-bold mb-2 flex justify-between items-center">
+                Dialogue <button onclick="editField('dialogue-content')" class="bg-gray-600 text-sm px-2 py-1 rounded">Edit</button>
+            </h2>
+            <div id="dialogue-content" class="text-gray-300"></div>
+        </div>
+        <div class="card p-4 rounded mb-4">
+            <h2 class="text-2xl font-bold mb-2 flex justify-between items-center">
+                Actions <button onclick="editField('actions-content')" class="bg-gray-600 text-sm px-2 py-1 rounded">Edit</button>
+            </h2>
+            <div id="actions-content" class="text-gray-300"></div>
+        </div>
+        <div class="card p-4 rounded">
+            <h2 class="text-2xl font-bold mb-2 flex justify-between items-center">
+                Loot <button onclick="editField('loot-content')" class="bg-gray-600 text-sm px-2 py-1 rounded">Edit</button>
+            </h2>
+            <div id="loot-content" class="text-gray-300"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentNPC = null;
+
+        async function generateNPC() {
+            const race = document.getElementById('race-input').value || getRandomElement(races);
+            const classType = document.getElementById('class-input').value || getRandomElement(classes);
+            const style = document.getElementById('style-input').value || getRandomElement(styles);
+            const playerCount = parseInt(document.getElementById('player-count').value) || 1;
+            const averageLevel = parseInt(document.getElementById('average-level').value) || 1;
+            const dangerLevel = document.getElementById('danger-level').value;
+            const otherInfo = document.getElementById('other-info').value;
+            const imageModel = document.getElementById('image-model').value;
+
+            const shouldGenerateImage = document.getElementById('generate-image').checked;
+
+            const npcImageContainer = document.getElementById('npc-image');
+            const statsBlock = document.getElementById('stats-block');
+            const bioContent = document.getElementById('bio-content');
+            const characterAspectsContent = document.getElementById('character-aspects-content');
+            const dialogueContent = document.getElementById('dialogue-content');
+            const actionsContent = document.getElementById('actions-content');
+            const lootContent = document.getElementById('loot-content');
+
+            // Reset content before generation
+            npcImageContainer.src = "https://via.placeholder.com/400x400.png?text=Generating...";
+            statsBlock.innerHTML = "Generating...";
+            bioContent.innerHTML = "Generating...";
+            characterAspectsContent.innerHTML = "Generating...";
+            dialogueContent.innerHTML = "Generating...";
+            actionsContent.innerHTML = "Generating...";
+            lootContent.innerHTML = "Generating...";
+
+            try {
+                const apiKeyResponse = await axios.get('/api/keys');
+                const openAiApiKey = apiKeyResponse.data.openaiKey;
+                const replicateApiKey = apiKeyResponse.data.replicateKey;
+
+                if (!openAiApiKey) {
+                    alert('OpenAI API key is missing. Please ensure it is correctly set.');
+                    return;
+                }
+
+                if (imageModel === 'flux' && !replicateApiKey) {
+                    alert('Replicate API key is missing. Please ensure it is correctly set.');
+                    return;
+                }
+
+                // Generate initial description
+                const initialDescription = await generateInitialDescription(race, classType, dangerLevel, playerCount, averageLevel, otherInfo, openAiApiKey);
+
+                // Update the UI with the initial description
+                updateDescriptionUI(initialDescription.description);
+
+                // Generate image in parallel using the description
+                let imageUrl = null;
+                if (shouldGenerateImage) {
+                    const imagePrompt = `Generate a fantasy NPC image of a ${race} ${classType} in ${style} style. Full body portrait, detailed background. ${otherInfo} ${initialDescription.description.summary} ${initialDescription.description.details.join(' ')}`;
+                    imageUrl = await generateImageFunc(imageModel, imagePrompt, openAiApiKey, replicateApiKey);
+                }
+
+                // Generate full NPC details
+                const npcDetails = await generateFullNPCDetails(race, classType, style, dangerLevel, playerCount, averageLevel, otherInfo, initialDescription, openAiApiKey);
+
+                // Update current NPC data with the generated details
+                currentNPC = { ...npcDetails, imageUrl };
+
+                // Update the UI with the generated NPC
+                if (imageUrl) {
+                    npcImageContainer.src = imageUrl;
+                }
+
+                updateNPCDisplay();
+
+            } catch (error) {
+                console.error('Error generating NPC:', error);
+                alert(`An error occurred while generating the NPC: ${error.message}`);
+            }
+        }
+
+        async function generateInitialDescription(race, classType, dangerLevel, playerCount, averageLevel, otherInfo, openAiApiKey) {
+            const descriptionPrompt = `Generate details for a ${race} ${classType} NPC with a ${dangerLevel} threat level relative to a party of ${playerCount} players with an average level of ${averageLevel}. 
+            Additional context and requirements: ${otherInfo}
+
+            Please provide the response in the following JSON format:
+            {
+                "description": {
+                    "summary": "One sentence description of who they are (race and profession)",
+                    "details": [
+                        "A cinematic detail about the NPC's appearance or mannerism",
+                        "Another vivid, sensory-rich detail about the NPC",
+                        "A third distinct, visual or auditory detail about the NPC",
+                        "A fourth specific, atmospheric detail about the NPC's presence",
+                        "A fifth unique, character-defining detail"
+                    ]
+                }
+            }`;
+
+            try {
+                const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: "You are a creative writer specializing in fantasy RPG character descriptions." },
+                        { role: "user", content: descriptionPrompt }
+                    ]
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${openAiApiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.data && response.data.choices && response.data.choices[0] && response.data.choices[0].message) {
+                    const details = response.data.choices[0].message.content;
+                    return JSON.parse(details.replace(/```json\n?|\n?```/g, '').trim());
+                } else {
+                    throw new Error("Unexpected API response structure");
+                }
+            } catch (error) {
+                console.error("API Error:", error.response ? error.response.data : error.message);
+                throw error;
+            }
+        }
+
+        async function generateFullNPCDetails(race, classType, style, dangerLevel, playerCount, averageLevel, otherInfo, initialDescription, openAiApiKey) {
+            const detailsPrompt = `Generate details for a ${race} ${classType} NPC with a ${dangerLevel} threat level relative to a party of ${playerCount} players with an average level of ${averageLevel}. 
+            Additional context and requirements: ${otherInfo}
+            Pre-generated description: ${JSON.stringify(initialDescription.description)}
+
+            Please provide the response in the following JSON format:
+            {
+                "aspects": {
+                    "current_activity": "What the character is currently doing or focused on",
+                    "short_term_goal": "An immediate plan or goal (e.g., going to a neighbor's house for tea)",
+                    "long_term_goal": "An overarching ambition or life goal",
+                    "personality": "A notable personality trait or quirk",
+                    "fear_weakness": "A fear or weakness",
+                    "belief_value": "A belief or value",
+                    "relationship": "A relationship or affiliation that motivates them",
+                    "potential_quest": "A small, potential quest or task the NPC might give to players"
+                },
+                "dialogue": [
+                    "A greeting or opening statement",
+                    "A notable remark or piece of dialogue",
+                    "Another interesting statement or question",
+                    "A fourth line of dialogue showing character",
+                    "A fifth distinct verbal expression",
+                    "A closing statement or farewell"
+                ],
+                "stats": {
+                    "name": "A name mixing Germanic fantasy and Slavic influences",
+                    "title": "NPC's title or occupation",
+                    "armorClass": "Generate an appropriate AC (10-20)",
+                    "hitPoints": "Generate appropriate HP (e.g., '45 (6d8 + 18)')",
+                    "speed": "Generate appropriate speed (e.g., '30 ft.')",
+                    "str": "Generate an appropriate STR score (3-20)",
+                    "dex": "Generate an appropriate DEX score (3-20)",
+                    "con": "Generate an appropriate CON score (3-20)",
+                    "int": "Generate an appropriate INT score (3-20)",
+                    "wis": "Generate an appropriate WIS score (3-20)",
+                    "cha": "Generate an appropriate CHA score (3-20)",
+                    "skills": "List relevant skills with modifiers",
+                    "senses": "List relevant senses (e.g., 'passive Perception 15')",
+                    "languages": "List known languages",
+                    "challenge": "Appropriate challenge rating and XP"
+                },
+                "actions": [
+                    {
+                        "name": "Action Name",
+                        "description": "Detailed description of the action"
+                    }
+                ],
+                "loot": "Description of loot and possessions"
+            }
+
+            Please ensure that the dialogue is natural and character-appropriate, avoiding clichés and flowery language (unless appropriate for the character). Incorporate the additional context and requirements into all aspects of the character, including their current activity, goals, personality, and potential quests.`;
+
+            try {
+                const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: "You are a creative writer specializing in fantasy RPG character creation." },
+                        { role: "user", content: detailsPrompt }
+                    ]
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${openAiApiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.data && response.data.choices && response.data.choices[0] && response.data.choices[0].message) {
+                    const details = response.data.choices[0].message.content;
+                    const parsedDetails = JSON.parse(details.replace(/```json\n?|\n?```/g, '').trim());
+                    return { ...parsedDetails, description: initialDescription.description };
+                } else {
+                    throw new Error("Unexpected API response structure");
+                }
+            } catch (error) {
+                console.error("API Error:", error.response ? error.response.data : error.message);
+                throw error;
+            }
+        }
+
+        async function generateImageFunc(model, prompt, openAiApiKey, replicateApiKey) {
+            if (model === 'dalle') {
+                try {
+                    const response = await axios.post('https://api.openai.com/v1/images/generations', {
+                        model: "dall-e-3",
+                        prompt: prompt,
+                        n: 1,
+                        size: "1024x1024"
+                    }, {
+                        headers: {
+                            'Authorization': `Bearer ${openAiApiKey}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    return response.data.data[0].url;
+                } catch (error) {
+                    console.error('Error generating image with DALL-E:', error);
+                    throw error;
+                }
+            } else if (model === 'flux') {
+                try {
+                    const response = await axios.post('/generate-image', {
+                        prompt
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${replicateApiKey}`
+                        }
+                    });
+                    return response.data.imageUrl;
+                } catch (error) {
+                    console.error('Error generating image with Flux:', error);
+                    throw error;
+                }
+            } else {
+                throw new Error('Invalid image model selected');
+            }
+        }
+
+        function updateNPCDisplay() {
+            const statsBlock = document.getElementById('stats-block');
+            const bioContent = document.getElementById('bio-content');
+            const characterAspectsContent = document.getElementById('character-aspects-content');
+            const dialogueContent = document.getElementById('dialogue-content');
+            const actionsContent = document.getElementById('actions-content');
+            const lootContent = document.getElementById('loot-content');
+
+            statsBlock.innerHTML = `
+                <p><strong>Name:</strong> ${currentNPC.stats.name}</p>
+                <p><strong>Title:</strong> ${currentNPC.stats.title}</p>
+                <p><strong>AC:</strong> ${currentNPC.stats.armorClass}</p>
+                <p><strong>HP:</strong> ${currentNPC.stats.hitPoints}</p>
+                <p><strong>Speed:</strong> ${currentNPC.stats.speed}</p>
+                <p><strong>STR:</strong> ${currentNPC.stats.str}</p>
+                <p><strong>DEX:</strong> ${currentNPC.stats.dex}</p>
+                <p><strong>CON:</strong> ${currentNPC.stats.con}</p>
+                <p><strong>INT:</strong> ${currentNPC.stats.int}</p>
+                <p><strong>WIS:</strong> ${currentNPC.stats.wis}</p>
+                <p><strong>CHA:</strong> ${currentNPC.stats.cha}</p>
+                <p><strong>Skills:</strong> ${currentNPC.stats.skills}</p>
+                <p><strong>Senses:</strong> ${currentNPC.stats.senses}</p>
+                <p><strong>Languages:</strong> ${currentNPC.stats.languages}</p>
+                <p><strong>Challenge:</strong> ${currentNPC.stats.challenge}</p>
+            `;
+
+            bioContent.innerHTML = `
+                <p><strong>Who they are:</strong> ${currentNPC.description.summary}</p>
+                <ul>${currentNPC.description.details.map(detail => `<li>${detail}</li>`).join('')}</ul>
+            `;
+
+            characterAspectsContent.innerHTML = `
+                <p><strong>Current Activity:</strong> ${currentNPC.aspects.current_activity}</p>
+                <p><strong>Short-term Goal:</strong> ${currentNPC.aspects.short_term_goal}</p>
+                <p><strong>Long-term Goal:</strong> ${currentNPC.aspects.long_term_goal}</p>
+                <p><strong>Personality:</strong> ${currentNPC.aspects.personality}</p>
+                <p><strong>Fear or Weakness:</strong> ${currentNPC.aspects.fear_weakness}</p>
+                <p><strong>Belief or Value:</strong> ${currentNPC.aspects.belief_value}</p>
+                <p><strong>Relationship or Motivation:</strong> ${currentNPC.aspects.relationship}</p>
+                <p><strong>Potential Quest:</strong> ${currentNPC.aspects.potential_quest}</p>
+            `;
+
+            dialogueContent.innerHTML = currentNPC.dialogue.map(line => `<p>${line}</p>`).join('');
+            actionsContent.innerHTML = currentNPC.actions.map(action => `<h4>${action.name}</h4><p>${action.description}</p>`).join('');
+            lootContent.textContent = currentNPC.loot;
+        }
+
+        function updateDescriptionUI(description) {
+            const bioContent = document.getElementById('bio-content');
+            bioContent.innerHTML = `
+                <p><strong>Who they are:</strong> ${description.summary}</p>
+                <ul>${description.details.map(detail => `<li>${detail}</li>`).join('')}</ul>
+            `;
+        }
+
+        async function saveNPC() {
+    if (!currentNPC) {
+        alert("No NPC generated yet. Please generate an NPC first.");
+        return;
+    }
+
+    try {
+        const response = await axios.post('/api/save-npc', currentNPC);
+        if (response.data.success) {
+            alert("NPC saved successfully!");
+        } else {
+            throw new Error("Failed to save NPC");
+        }
+    } catch (error) {
+        console.error('Error saving NPC:', error);
+        alert(`An error occurred while saving the NPC: ${error.message}`);
+    }
+}
+
+        function editField(fieldId) {
+    const contentDiv = document.getElementById(fieldId);
+    const currentContent = contentDiv.innerHTML;
+    
+    const textarea = document.createElement('textarea');
+    textarea.value = currentContent;
+    textarea.style.width = '100%';
+    textarea.style.height = contentDiv.offsetHeight + 'px';
+    textarea.style.backgroundColor = '#4a5568';
+    textarea.style.color = '#e2e8f0';
+    textarea.style.border = 'none';
+    textarea.style.padding = '8px';
+    textarea.style.borderRadius = '4px';
+    textarea.style.resize = 'vertical';
+
+    contentDiv.innerHTML = '';
+    contentDiv.appendChild(textarea);
+    textarea.focus();
+
+    textarea.addEventListener('blur', function() {
+        const newContent = textarea.value;
+        contentDiv.innerHTML = newContent;
+        
+        // Update the currentNPC object
+        const field = fieldId.replace('-content', '').replace('-block', '');
+        if (field === 'bio') {
+            currentNPC.description.summary = newContent;
+        } else if (field === 'stats') {
+            currentNPC.stats = JSON.parse(newContent);
+        } else if (field === 'character-aspects') {
+            currentNPC.aspects = JSON.parse(newContent);
+        } else {
+            currentNPC[field] = JSON.parse(newContent);
+        }
+
+        // Update the display
+        updateNPCDisplay();
+    });
+}
+        const races = ["Human", "Elf", "Dwarf", "Orc", "Halfling", "Gnome", "Dragonborn", "Tiefling"];
+        const classes = ["Warrior", "Mage", "Rogue", "Cleric", "Paladin", "Ranger", "Bard", "Monk"];
+        const styles = ["Realistic", "Cartoon", "Anime", "Watercolor", "Digital Art", "Oil Painting", "Pixel Art", "Comic Book"];
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+		
+		
+    </script>
+</body>
+</html>

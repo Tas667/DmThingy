@@ -1,0 +1,63 @@
+{
+  "aspects": {
+    "current_activity": "Patrolling a rocky section of the mountain path, occasionally stopping to sniff the air and listen for any unusual sounds.",
+    "short_term_goal": "Ensure that no trespassers disturb the wildlife or the natural order of the mountain.",
+    "long_term_goal": "To gain the trust of the mountain spirits, hoping to be recognized as an eternal guardian of these grounds.",
+    "personality": "Intensely loyal and protective, but with a gentle demeanor towards those who show respect to the mountain.",
+    "fear_weakness": "Fear of abandoned or forgotten places; he feels diminished in places devoid of life and energy.",
+    "belief_value": "Believes in the balance of nature and the importance of protecting the mountain from those who would exploit it.",
+    "relationship": "Has a bond with a reclusive ranger who shares tales of the mountain's glories, serving as a mentor in understanding the land.",
+    "potential_quest": "He asks the player to retrieve a lost charm belonging to the ranger, which enhances his connection to the mountain spirits."
+  },
+  "dialogue": [
+    "Greetings, traveler. Be careful on these treacherous paths; many stumble here without a guide.",
+    "The winds tell me of an unease nearby. Have you heard anything unusual during your journey?",
+    "I sense a visitor’s presence—what brings you to this lonely corner of the world?",
+    "Beware of those who take without giving back; the mountain doesn’t forget wrongdoings.",
+    "I can help you find your way, but be honest with me—your intentions matter more than you know.",
+    "Safe travels, friend. May the spirits of the mountain watch over your steps."
+  ],
+  "stats": {
+    "name": "Brakkun",
+    "title": "Guardian of the Mountain Path",
+    "armorClass": "13",
+    "hitPoints": "38 (5d8 + 15)",
+    "speed": "40 ft.",
+    "str": 16,
+    "dex": 14,
+    "con": 16,
+    "int": 3,
+    "wis": 14,
+    "cha": 7,
+    "skills": {
+      "Perception": "+5",
+      "Animal Handling": "+4",
+      "Stealth": "+4"
+    },
+    "senses": "Darkvision 60 ft., passive Perception 15",
+    "languages": "Understands Common and Sylvan, but can only bark and growl.",
+    "challenge": "2 (450 XP)"
+  },
+  "actions": [
+    {
+      "name": "Bite",
+      "description": "Brakkun bites at an enemy with a powerful jaws, dealing 1d6 + 3 piercing damage on a hit."
+    },
+    {
+      "name": "Protective Growl",
+      "description": "Brakkun emits a low, rumbling growl, imposing disadvantage on attack rolls made against him until the start of his next turn."
+    }
+  ],
+  "loot": "Brakkun carries an old, weather-worn collar with inscriptions marking his loyalty to the mountain and the ranger, as well as a small pouch containing a few healing herbs he collects during his patrols.",
+  "description": {
+    "summary": "A rugged mountain dog with keen senses and a loyal heart, serving as a guardian of the mountain path.",
+    "details": [
+      "His fur is a thick, matted coat of dark browns and blacks, dusted with frost from the chilly mountain air, hinting at both endurance and rugged beauty.",
+      "The sharp glint in his amber eyes reflects the early morning sun, and he emits a low, reassuring growl that resonates through the crisp silence of the mountain trail.",
+      "As he moves, his powerful legs seem to glide effortlessly over the rocky ground, the soft padding of his paws barely making a sound despite his size.",
+      "The scent of pine and distant campfires mingles with the earthy musk of the dog, creating a comforting yet wild atmosphere that evokes the spirit of the mountains.",
+      "When he sits, his large, bushy tail thumps against the ground like a gentle drumbeat, revealing his alert nature and readiness to defend his territory against any intruder."
+    ]
+  },
+  "imageUrl": "saved/npc_brakkun_2024-09-30/image.png"
+}

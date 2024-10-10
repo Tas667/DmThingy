@@ -1,0 +1,63 @@
+{
+  "aspects": {
+    "current_activity": "Tilling the soil of his small plot, preparing it for the coming planting season.",
+    "short_term_goal": "To gather enough firewood for the evening's cooking.",
+    "long_term_goal": "To expand his farm and ensure his family's self-sufficiency for the years to come.",
+    "personality": "Pragmatic and observant, with a knack for reading people's intentions.",
+    "fear_weakness": "He harbors a deep-seated fear of losing his crop to blight, having seen it ruin neighbors' livelihoods.",
+    "belief_value": "He believes in hard work and integrity above all, valuing honest labor over quick gains.",
+    "relationship": "He has a strong bond with his young daughter, who assists him on the farm and inspires him to create a better life.",
+    "potential_quest": "He might ask the player for help in retrieving a rare herb from the nearby woods, needed for a stubborn ailment affecting his livestock."
+  },
+  "dialogue": [
+    "Ah, a traveler! Nice to see a fresh face 'round these parts.",
+    "The soil's good this year, but it needs a bit more care than most folks think.",
+    "You ever had to fight off a rogue boar? They'll tear through a field in no time if you're not watching.",
+    "The trick is to listen to the land, not let it go dry or sour. Sometimes, all it takes is a little patience.",
+    "Here, take a handful of grain— feed those chickens will and they'll keep you entertained.",
+    "Well, do take care out there, and if you see a wandering soul, lend a hand if you can."
+  ],
+  "stats": {
+    "name": "Gregor Vorse",
+    "title": "Farmer",
+    "armorClass": "12",
+    "hitPoints": "30 (4d8 + 12)",
+    "speed": "30 ft.",
+    "str": "14",
+    "dex": "10",
+    "con": "16",
+    "int": "12",
+    "wis": "15",
+    "cha": "13",
+    "skills": {
+      "Animal Handling": "+4",
+      "Survival": "+5",
+      "Insight": "+4"
+    },
+    "senses": "passive Perception 13",
+    "languages": [
+      "Common",
+      "Farmers' Dialect"
+    ],
+    "challenge": "1/2",
+    "xp": "100"
+  },
+  "actions": [
+    {
+      "name": "Farm Tactics",
+      "description": "Uses the environment to his advantage, using his staff as both tool and weapon in defense of his farm."
+    }
+  ],
+  "loot": "Gregor possesses farming tools, a few simple potions made from herbs, and a small stash of coins saved from selling his produce. He also has an old, intricately carved amulet given to him by his father, said to bring good fortune in harvest.",
+  "description": {
+    "summary": "A weathered human farmer, steadfast and shrewd, tending to his land with quiet determination.",
+    "details": [
+      "His sun-kissed skin is lined with years of toil, and a well-worn straw hat rests atop his head, shielding his keen green eyes that seem to pierce through the overcast skies.",
+      "The scent of freshly turned earth clings to him, mingled with the faint aroma of hay and a hint of smoke from a nearby fire pit where he tends to his humble meals.",
+      "As he speaks, his voice carries a gravelly timbre, reminiscent of rustling leaves, and its tone oscillates between warm friendliness and terse seriousness.",
+      "An aged wooden staff, etched with symbols of harvest, leans against the fence post nearby, a tool of both labor and defense, showcasing his readiness to protect his home.",
+      "A flock of scrappy chickens clucks enthusiastically around his feet, and he often tosses them bits of grain from a woven pouch, revealing his nurturing spirit and deep connection to the life he cultivates."
+    ]
+  },
+  "imageUrl": "saved/npc_gregor_vorse_2024-09-30/image.png"
+}

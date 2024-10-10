@@ -1,0 +1,64 @@
+{
+  "aspects": {
+    "current_activity": "Grom is polishing glasses behind the bar while listening to the whispers of patrons gossiping about the Redbrands.",
+    "short_term_goal": "To gather enough courage and allies to confront the Redbrands and take back control of the town.",
+    "long_term_goal": "To find a cure for his daughter's condition and restore a sense of hope and safety to Handelver.",
+    "personality": "He has an unyielding spirit, yet his sadness makes him very guarded around new people.",
+    "fear_weakness": "The fear of losing his daughter and being powerless to stop her suffering haunts him.",
+    "belief_value": "He believes that every creature deserves a chance at happiness and freedom, especially those oppressed by tyrants.",
+    "relationship": "His strong bond with his daughter drives him, while his disdain for the Redbrands fuels his desire for rebellion.",
+    "potential_quest": "Grom might ask the player to retrieve a rare herb from the nearby forest rumored to alleviate curses, believing it could provide temporary relief for his daughter's SCURGE."
+  },
+  "dialogue": [
+    "Welcome to the Stone Hill, stranger. Pull up a stool, it's warm here.",
+    "You hear that? Those Redbrands think they own this town. Hmph, I'll show them what grit looks like.",
+    "My daughter... She's ill. A curse, they say, one that haunts our bloodline. If only I could find a way to heal her.",
+    "You’ve got the look of someone who's seen a fight or two. Maybe you’d be interested in putting that to use?",
+    "Sometimes I wonder if my old military days were for nothing. But then I see my daughter, and I know I won’t give up.",
+    "Take care out there. This town needs a spark of hope, and I can feel it brewing. Farewell, for now."
+  ],
+  "stats": {
+    "name": "Grom Ironjaw",
+    "title": "Bartender and Innkeeper",
+    "armorClass": "12",
+    "hitPoints": "30 (4d10 + 8)",
+    "speed": "30 ft.",
+    "str": 16,
+    "dex": 11,
+    "con": 14,
+    "int": 10,
+    "wis": 13,
+    "cha": 15,
+    "skills": {
+      "Intimidation": "+4",
+      "Insight": "+3",
+      "Persuasion": "+5"
+    },
+    "senses": "Passive Perception 13",
+    "languages": [
+      "Common",
+      "Orc",
+      "Dwarvish"
+    ],
+    "challenge": "1/2 (100 XP)"
+  },
+  "actions": [
+    {
+      "name": "Barroom Brawl",
+      "description": "Should tensions escalate, Grom may quickly use his past combat experience to defend the bar by throwing glasses or shoving assailants away with surprising strength."
+    }
+  ],
+  "loot": "Grom keeps a small stash of healing potions he's managed to acquire over time, and he can offer a few rations from the inn. He also has an old military badge that holds sentimental value and could be used to rally support from former comrades.",
+  "description": {
+    "summary": "Grom Ironjaw is a hal-ork bartender and former soldier, running the Stone Hill Inn in Handelver.",
+    "details": [
+      "His rugged, muscular frame is adorned with a faded military jacket, the insignia barely visible beneath layers of grime and sorrow, as he skillfully wipes down the bar with an old, stained cloth.",
+      "The warmth of the hearth casts flickering shadows across his scarred face, highlighting a deep frown that speaks of loss and a lingering battle with despair.",
+      "He has a gravelly voice, a blend of authority and weariness, and when he speaks, the weight of his unspoken stories hangs in the air like the scent of smoke from the fire.",
+      "Patrons feel an unshakable tension around him; his once-proud demeanor has waned under the burden of his daughter's illness, and he often gazes out the window as if searching for a lost hope.",
+      "Beneath his tough exterior lies a glimmer of rebellion in his eyes, a fierce determination that ignites when he hears whispers of resistance against the Redbrands",
+      "As he pours drinks, Grom subtly sizes up his customers, ever on the lookout for those who might join him in his quiet fight against tyranny."
+    ]
+  },
+  "imageUrl": "saved/npc_grom_ironjaw_2024-09-28/image.png"
+}

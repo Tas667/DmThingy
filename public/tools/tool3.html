@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DnD Miniature Creator - Paper Mini, Token, and Card Modes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            color: #e0e0e0;
+            text-align: center;
+        }
+        #dropZone {
+            border: 2px dashed #3d3d3d;
+            border-radius: 20px;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #e0e0e0;
+        }
+        #dropZone:hover {
+            background-color: #2a2a2a;
+        }
+        #canvas {
+            width: 297mm;
+            height: 210mm;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .miniature, .token, .card {
+            position: absolute;
+            cursor: move;
+            overflow: hidden;
+        }
+        .miniature img, .token img, .card img {
+            width: 100%;
+            display: block;
+        }
+        .token {
+            border-radius: 50%;
+        }
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+        .miniature:hover .remove-image, .token:hover .remove-image, .card:hover .remove-image {
+            display: flex;
+        }
+        #imageList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .thumbnail-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .thumbnail-container:hover .remove-image {
+            display: flex;
+        }
+        #cropperContainer {
+            display: none;
+            margin-top: 20px;
+        }
+        #cropperImage {
+            max-width: 100%;
+            max-height: 400px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        #buttonContainer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        #modeToggle {
+            margin-bottom: 20px;
+        }
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DnD Miniature Creator - Paper Mini, Token, and Card Modes</h1>
+        <div id="dropZone">Drag and drop images here or click to select</div>
+        <div id="imageList"></div>
+        <div id="cropperContainer">
+            <img id="cropperImage" src="" alt="Image to crop">
+            <div id="modeToggle">
+                <label>
+                    <input type="radio" name="mode" value="paperMini" checked> Paper Mini
+                </label>
+                <label>
+                    <input type="radio" name="mode" value="token"> Token
+                </label>
+                <label>
+                    <input type="radio" name="mode" value="card"> Card (Horizontal)
+                </label>
+                <label>
+                    <input type="radio" name="mode" value="cardVertical"> Card (Vertical)
+                </label>
+            </div>
+            <button id="cropButton">Crop and Add to Canvas</button>
+        </div>
+        <div id="canvas"></div>
+        <div id="buttonContainer">
+            <button id="exportButton">Export as JPG</button>
+            <button id="clearButton">Clear Canvas</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const canvas = document.getElementById('canvas');
+    const imageList = document.getElementById('imageList');
+    const cropperContainer = document.getElementById('cropperContainer');
+    const cropperImage = document.getElementById('cropperImage');
+    const cropButton = document.getElementById('cropButton');
+    const exportButton = document.getElementById('exportButton');
+    const clearButton = document.getElementById('clearButton');
+    const modeToggle = document.getElementById('modeToggle');
+    let images = [];
+    let cropper;
+    let currentMode = 'paperMini';
+    let currentSrc = '';
+
+    const DND_SQUARE_SIZE = 25.4; // 1 inch in mm
+    const PIXELS_PER_MM = 3.78; // Conversion factor
+    const CREDIT_CARD_WIDTH = 85.6; // Credit card width in mm
+    const CREDIT_CARD_HEIGHT = 54; // Credit card height in mm
+
+    modeToggle.addEventListener('change', (e) => {
+      currentMode = e.target.value;
+      if (cropper) {
+        cropper.destroy();
+        initCropper();
+      }
+    });
+
+    dropZone.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.multiple = true;
+      input.accept = 'image/*';
+      input.onchange = (event) => handleFiles(event.target.files);
+      input.click();
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+      if (files && files.length) {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              images.push(e.target.result);
+              updateImageList();
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+      }
+    }
+
+    function updateImageList() {
+      imageList.innerHTML = '';
+      images.forEach((src, index) => {
+        const thumbnailContainer = document.createElement('div');
+        thumbnailContainer.className = 'thumbnail-container';
+
+        const thumbnail = document.createElement('img');
+        thumbnail.src = src;
+        thumbnail.className = 'thumbnail';
+        thumbnail.onclick = () => openCropper(src);
+
+        const removeButton = document.createElement('button');
+        removeButton.className = 'remove-image';
+        removeButton.textContent = 'X';
+        removeButton.onclick = (e) => {
+          e.stopPropagation();
+          removeImage(index);
+        };
+
+        thumbnailContainer.appendChild(thumbnail);
+        thumbnailContainer.appendChild(removeButton);
+        imageList.appendChild(thumbnailContainer);
+      });
+    }
+
+    function removeImage(index) {
+      images.splice(index, 1);
+      updateImageList();
+    }
+
+    function openCropper(src) {
+      currentSrc = src;
+      cropperImage.src = src;
+      cropperContainer.style.display = 'block';
+      initCropper();
+    }
+
+    function initCropper() {
+      if (cropper) {
+        cropper.destroy();
+      }
+      cropper = new Cropper(cropperImage, {
+        aspectRatio: currentMode === 'token' ? 1 :
+          currentMode === 'card' ? CREDIT_CARD_WIDTH / CREDIT_CARD_HEIGHT :
+          currentMode === 'cardVertical' ? CREDIT_CARD_HEIGHT / CREDIT_CARD_WIDTH :
+          NaN,
+        viewMode: 1,
+        cropBoxResizable: currentMode !== 'token',
+        cropBoxMovable: currentMode !== 'token',
+        toggleDragModeOnDblclick: false,
+        dragMode: 'move',
+        guides: currentMode !== 'token',
+        center: currentMode !== 'token',
+        background: false,
+        modal: false,
+        autoCropArea: 1,
+        minCropBoxWidth: currentMode === 'token' ? 200 : 100,
+        minCropBoxHeight: currentMode === 'token' ? 200 : 100,
+        ready: function() {
+          if (currentMode === 'token') {
+            const cropBox = this.cropBox;
+            cropBox.style.borderRadius = '50%';
+          }
+        }
+      });
+    }
+
+    cropButton.addEventListener('click', () => {
+      const croppedCanvas = cropper.getCroppedCanvas();
+      if (currentMode === 'paperMini') {
+        createPaperMini(croppedCanvas);
+      } else if (currentMode === 'token') {
+        createToken(croppedCanvas);
+      } else if (currentMode === 'card') {
+        createCard(croppedCanvas);
+      } else if (currentMode === 'cardVertical') {
+        createCard(croppedCanvas, true);
+      }
+      // Keep the cropper open with the current image
+      openCropper(currentSrc);
+    });
+
+    function createPaperMini(croppedCanvas) {
+      const miniature = document.createElement('div');
+      miniature.className = 'miniature';
+      
+      const originalImg = document.createElement('img');
+      originalImg.src = croppedCanvas.toDataURL();
+
+      const reflectionImg = originalImg.cloneNode(true);
+      reflectionImg.style.transform = 'scaleY(-1)';
+
+      miniature.appendChild(reflectionImg);
+      miniature.appendChild(originalImg);
+
+      // Scale the miniature to match DnD square size
+      const dndSquarePixels = DND_SQUARE_SIZE * PIXELS_PER_MM;
+      const scaleFactor = dndSquarePixels / croppedCanvas.width;
+      miniature.style.width = `${dndSquarePixels}px`;
+      miniature.style.height = `${croppedCanvas.height * 2 * scaleFactor}px`;
+
+      const position = findAvailablePosition(dndSquarePixels, croppedCanvas.height * 2 * scaleFactor);
+      miniature.style.left = position.x + 'px';
+      miniature.style.top = position.y + 'px';
+
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-image';
+      removeButton.textContent = 'X';
+      removeButton.onclick = (e) => {
+        e.stopPropagation();
+        canvas.removeChild(miniature);
+      };
+      miniature.appendChild(removeButton);
+
+      canvas.appendChild(miniature);
+
+      makeDraggable(miniature);
+    }
+
+    function createToken(croppedCanvas) {
+      const token = document.createElement('div');
+      token.className = 'token';
+      
+      const tokenImg = document.createElement('img');
+      tokenImg.src = croppedCanvas.toDataURL();
+
+      token.appendChild(tokenImg);
+
+      // Scale the token to match DnD square size
+      const dndSquarePixels = DND_SQUARE_SIZE * PIXELS_PER_MM;
+      token.style.width = `${dndSquarePixels}px`;
+      token.style.height = `${dndSquarePixels}px`;
+
+      const position = findAvailablePosition(dndSquarePixels, dndSquarePixels);
+      token.style.left = position.x + 'px';
+      token.style.top = position.y + 'px';
+
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-image';
+      removeButton.textContent = 'X';
+      removeButton.onclick = (e) => {
+        e.stopPropagation();
+        canvas.removeChild(token);
+      };
+      token.appendChild(removeButton);
+
+      canvas.appendChild(token);
+
+      makeDraggable(token);
+    }
+
+    function createCard(croppedCanvas, isVertical = false) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.borderRadius = '10px';
+      card.style.overflow = 'hidden';
+      
+      const cardImg = document.createElement('img');
+      cardImg.src = croppedCanvas.toDataURL();
+
+      card.appendChild(cardImg);
+
+      // Scale the card to the size of a credit card
+      const cardWidth = CREDIT_CARD_WIDTH * PIXELS_PER_MM;
+      const cardHeight = CREDIT_CARD_HEIGHT * PIXELS_PER_MM;
+      card.style.width = isVertical ? `${cardHeight}px` : `${cardWidth}px`;
+      card.style.height = isVertical ? `${cardWidth}px` : `${cardHeight}px`;
+
+      const position = findAvailablePosition(cardWidth, cardHeight);
+      card.style.left = position.x + 'px';
+      card.style.top = position.y + 'px';
+
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-image';
+      removeButton.textContent = 'X';
+      removeButton.onclick = (e) => {
+        e.stopPropagation();
+        canvas.removeChild(card);
+      };
+      card.appendChild(removeButton);
+
+      canvas.appendChild(card);
+
+      makeDraggable(card);
+    }
+
+    function findAvailablePosition(width, height) {
+      const canvasRect = canvas.getBoundingClientRect();
+      const gap = 10; // Gap between elements
+
+      for (let y = 0; y < canvasRect.height; y += height + gap) {
+        for (let x = 0; x < canvasRect.width; x += width + gap) {
+          if (!isPositionOccupied(x, y, width, height)) {
+            return { x, y };
+          }
+        }
+      }
+
+      // If no position found, return the top-left corner
+      return { x: 0, y: 0 };
+    }
+
+    function isPositionOccupied(x, y, width, height) {
+      const elements = canvas.querySelectorAll('.miniature, .token, .card');
+      for (const element of elements) {
+        const rect = element.getBoundingClientRect();
+        if (
+          x < rect.right &&
+          x + width > rect.left &&
+          y < rect.bottom &&
+          y + height > rect.top
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function makeDraggable(element) {
+      interact(element)
+        .draggable({
+          inertia: true,
+          modifiers: [
+            interact.modifiers.restrictRect({
+              restriction: 'parent',
+              endOnly: true
+            })
+          ],
+          autoScroll: true,
+          listeners: {
+            move: dragMoveListener,
+          }
+        });
+    }
+
+    function dragMoveListener(event) {
+      var target = event.target;
+      var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+      var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+      target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+
+      target.setAttribute('data-x', x);
+      target.setAttribute('data-y', y);
+    }
+
+    exportButton.addEventListener('click', () => {
+      // Reset transforms before export
+      const elements = canvas.querySelectorAll('.miniature, .token, .card');
+      elements.forEach(element => {
+        const x = parseFloat(element.getAttribute('data-x')) || 0;
+        const y = parseFloat(element.getAttribute('data-y')) || 0;
+        element.style.transform = 'none';
+        element.style.left = (parseFloat(element.style.left) + x) + 'px';
+        element.style.top = (parseFloat(element.style.top) + y) + 'px';
+      });
+
+      html2canvas(canvas, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        logging: false,
+        width: canvas.offsetWidth,
+        height: canvas.offsetHeight
+      }).then(renderedCanvas => {
+        const link = document.createElement('a');
+        link.download = 'dnd_miniatures.jpg';
+        link.href = renderedCanvas.toDataURL('image/jpeg');
+        link.click();
+
+        // Restore transforms after export
+        elements.forEach(element => {
+          const x = parseFloat(element.style.left);
+          const y = parseFloat(element.style.top);
+          element.style.left = '0px';
+          element.style.top = '0px';
+          element.style.transform = `translate(${x}px, ${y}px)`;
+        });
+      });
+    });
+
+    clearButton.addEventListener('click', () => {
+      canvas.innerHTML = '';
+    });
+  </script>
+</body>
+</html>

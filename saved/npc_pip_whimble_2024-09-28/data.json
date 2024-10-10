@@ -1,0 +1,62 @@
+{
+  "aspects": {
+    "current_activity": "Pip is mending his fishing nets by the lakeshore, occasionally glancing at the water for any movement.",
+    "short_term_goal": "Finish repairing his nets before sunset, so he can set out for the best fishing spot early tomorrow morning.",
+    "long_term_goal": "To catch 'The Glimmering Fish,' a legendary creature said to grant a wish to those who catch it.",
+    "personality": "Pip has an endearing and optimistic outlook, viewing every catch as a potential treasure even if it turns out to be just a shoal of minnows.",
+    "fear_weakness": "He has a deep-seated fear of storms, stemming from a near-drowning incident in his youth.",
+    "belief_value": "Pip firmly believes that hard work will always yield a reward, be it in fish or friendship.",
+    "relationship": "He has a close bond with the local baker, Feena, who provides him with bread in exchange for fresh fish and tales of his exploits.",
+    "potential_quest": "Pip has lost an old lucky lure in the depths of Glimmering Lake and would like the player to retrieve it for him, offering a small pouch of coins in return."
+  },
+  "dialogue": [
+    "Ahoy there, traveler! Care to join an old gnome for a day's fishing?",
+    "You wouldn't believe the sizes of the fish that got away from me last week! I swear one was as big as a small boat!",
+    "Did you know the secret to catching the big ones? You gotta listen to the water—it speaks, you know!",
+    "Hope you brought a good appetite! Nothing beats fresh catch for dinner, especially with some of Feena's bread!",
+    "Just remember, even the smallest fish can bring the biggest smiles!",
+    "Well then, I best be getting back to my nets. May your journeys be as bright as the waters!"
+  ],
+  "stats": {
+    "name": "Pip Whimble",
+    "title": "Fisherman",
+    "armorClass": "12",
+    "hitPoints": "20 (4d8 + 4)",
+    "speed": "25 ft.",
+    "str": 10,
+    "dex": 14,
+    "con": 12,
+    "int": 11,
+    "wis": 15,
+    "cha": 16,
+    "skills": {
+      "Fishing": "+5",
+      "Persuasion": "+4",
+      "Survival": "+3"
+    },
+    "senses": "passive Perception 13",
+    "languages": [
+      "Common",
+      "Gnomish"
+    ],
+    "challenge": "1/8 (25 XP)"
+  },
+  "actions": [
+    {
+      "name": "Whirling Net Throw",
+      "description": "Pip can throw his net in a wide arc, catching small fish in a 5-foot radius. He gains advantage on fishing-related tasks."
+    }
+  ],
+  "loot": "Pip keeps a small stash of coins in a worn leather pouch, along with a collection of shiny pebbles he’s picked up over the years, believing they bring good luck.",
+  "description": {
+    "summary": "Pip Whimble, a one-eyed gnome fisherman, spends his days casting nets along the tranquil shores of Glimmering Lake.",
+    "details": [
+      "His weathered face is adorned with a bushy white beard, and one large, sparkling eye twinkles slyly beneath a floppy blue hat, the brim frayed and salt-stained from years by the water.",
+      "The smell of brine clings to him, accompanied by the faint scent of smoked fish that hints at his culinary talents by the shore.",
+      "With each animated gesture, the wooden fishing pole in his hand creaks softly, and his laughter rings out like the chirping of nearby crickets as he tells tales of his catch.",
+      "As he speaks, a mischievous glimmer in his single eye seems to sway with the mesmerizing ripples of the lake, casting a charm that draws listeners in.",
+      "Pip has a habit of whistling old fishing songs, his voice wavering but full of spirit, creating an infectious atmosphere that uplifts anyone around him."
+    ]
+  },
+  "imageUrl": "saved/npc_pip_whimble_2024-09-28/image.png"
+}

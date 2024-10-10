@@ -1,0 +1,62 @@
+{
+  "aspects": {
+    "current_activity": "Tending to her herb garden while humming softly to herself.",
+    "short_term_goal": "To collect enough chamomile flowers to prepare a soothing tea for a neighbor's cough.",
+    "long_term_goal": "To compile a comprehensive herbal guide that may one day help heal those in her village and beyond.",
+    "personality": "Her gentle nature makes her a calming presence, yet she has a mischievous sense of humor that emerges during conversations.",
+    "fear_weakness": "She fears losing her memory, as she has seen too many friends succumb to age and forgetfulness.",
+    "belief_value": "She believes that nature has a remedy for every ailment and places great value on the interconnectedness of life.",
+    "relationship": "She has a warm relationship with the village children, often sharing stories and herbal remedies with them.",
+    "potential_quest": "She needs help gathering rare herbs that only bloom near the cliffs, offering a special tea blend as a reward."
+  },
+  "dialogue": [
+    "Ah, welcome, dear! Come in, the scents are much better in here, I assure you!",
+    "You know, the secret to a good tea is patience. Just like in life.",
+    "Did you know that lavender can ward off nightmares? It's true! And it smells lovely too.",
+    "I once met a traveler who claimed he could brew the perfect potion... until he confused salt for sugar!",
+    "Every petal and leaf has a story, just as every person does. What brings you to my garden today?",
+    "Take care of yourself, dear. And remember, nature always listens."
+  ],
+  "stats": {
+    "name": "Hildegard Wrotnik",
+    "title": "Elderly Herbalist",
+    "armorClass": "12",
+    "hitPoints": "30 (5d8 + 5)",
+    "speed": "25 ft.",
+    "str": 8,
+    "dex": 10,
+    "con": 12,
+    "int": 14,
+    "wis": 18,
+    "cha": 16,
+    "skills": [
+      "Herbalism +5",
+      "Medicine +6",
+      "Persuasion +3"
+    ],
+    "senses": "passive Perception 15",
+    "languages": [
+      "Common",
+      "Sylvan"
+    ],
+    "challenge": "1/4 (50 XP)"
+  },
+  "actions": [
+    {
+      "name": "Herbal Brew",
+      "description": "Hildegard can prepare a soothing tea from gathered herbs that heals 1d4 hit points when consumed (3 uses per day)."
+    }
+  ],
+  "loot": "A collection of dried herbs, a small pouch of chamomile, and a worn but lovingly crafted herbalist's guide. She also offers a special potion of healing tea as a quest reward.",
+  "description": {
+    "summary": "An elderly human herbalist known for her gentle demeanor and vast knowledge of plants.",
+    "details": [
+      "Her silver hair, tied back in a loose bun, is often adorned with small wildflowers she gathers during her walks.",
+      "The scent of dried herbs and earthy spices follows her, mixing with the faint sweetness of honey lingering from her tea preparations.",
+      "She has deep-set hazel eyes that glimmer with wisdom and kindness, often sparkling with mirth as she shares her tales.",
+      "The soft sound of her creaking wooden staff, polished smooth from years of use, accompanies her slow yet deliberate movements.",
+      "Her tattered cloak, a patchwork of vibrant colors, tells the history of her many encounters with villagers and travelers alike."
+    ]
+  },
+  "imageUrl": "saved/npc_hildegard_wrotnik_2024-09-30/image.png"
+}
